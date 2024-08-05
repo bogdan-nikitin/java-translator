@@ -17,7 +17,8 @@ public class TranslatorController {
     }
 
     @GetMapping("/")
-    public String index(final Model model) {
+    public String index(final Model model, final String source, final String target, final String query) {
+        model.addAttribute("query", query);
         model.addAttribute("languages", languages);
         return "index";
     }
