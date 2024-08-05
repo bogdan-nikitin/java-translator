@@ -24,8 +24,8 @@ public class TranslateService {
         this.executorService = Executors.newFixedThreadPool(THREADS_COUNT);
     }
 
-    public String translateWord(final String source, final String target, final String query) {
-        final ResponseEntity<TranslatedText> response = restTemplate.postForEntity(apiUrl + API_PATH, new TranslateQuery(source, target, query), TranslatedText.class);
+    public String translateWord(final String source, final String target, final String word) {
+        final ResponseEntity<TranslatedText> response = restTemplate.postForEntity(apiUrl + API_PATH, new TranslateQuery(source, target, word), TranslatedText.class);
         return Objects.requireNonNull(response.getBody()).getTranslatedText();
     }
 
