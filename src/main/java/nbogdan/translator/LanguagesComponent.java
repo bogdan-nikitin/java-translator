@@ -7,7 +7,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 public class LanguagesComponent {
-
+    public static final String API_PATH = "/languages";
     private final RestTemplate restTemplate;
     private final String apiUrl;
 
@@ -19,7 +19,7 @@ public class LanguagesComponent {
 
     @Bean
     public Language[] languages() {
-        final var response = restTemplate.getForEntity(apiUrl + "/languages", Language[].class);
+        final var response = restTemplate.getForEntity(apiUrl + API_PATH, Language[].class);
         return response.getBody();
     }
 }
