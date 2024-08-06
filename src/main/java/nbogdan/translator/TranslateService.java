@@ -6,9 +6,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class TranslateService {
@@ -30,15 +32,19 @@ public class TranslateService {
     }
 
     public String translate(final String source, final String target, final String query) {
-        final String[] words = query.split(" ");
+        final Stream<String> words = BreakWords.breakWords(query, Locale.of(source));
         try {
-            return executorService.invokeAll(Arrays.stream(words).map(word -> (Callable<String>) () -> translateWord(source, target, word)).toList()).stream().map(future -> {
+            return executorService.invokeAll(words
+                    .map(word -> (Callable<String>)
+                            () -> BreakWords.isWord(word) ? translateWord(source, target, word) : word)
+                            .toList()).stream()
+                    .map(future -> {
                 try {
                     return future.get();
                 } catch (final ExecutionException | InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-            }).collect(Collectors.joining(" "));
+            }).collect(Collectors.joining());
         } catch (final InterruptedException e) {
             throw new RuntimeException(e);
         }

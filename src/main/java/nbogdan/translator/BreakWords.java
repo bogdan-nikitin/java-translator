@@ -8,8 +8,6 @@ import java.util.Locale;
 import java.util.stream.Stream;
 
 public class BreakWords {
-    private static final String WORD_BOUNDARY = "((?<=\\p{Alpha})(?=\\P{Alpha}))|((?<=\\P{Alpha})(?=\\p{Alpha}))";
-
     @AllArgsConstructor
     @Data
     private static class Slice {
@@ -28,7 +26,7 @@ public class BreakWords {
         }).map(slice -> text.substring(slice.getStart(), slice.getEnd()));
     }
 
-    public static String[] breakWords(final String text) {
-        return text.split(WORD_BOUNDARY);
+    public static boolean isWord(final String string) {
+        return string.chars().anyMatch(Character::isLetter);
     }
 }
