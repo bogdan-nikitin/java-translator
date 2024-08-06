@@ -19,6 +19,10 @@ public class CreateTable implements CommandLineRunner {
         log.info("Creating tables");
         jdbcTemplate.execute("DROP TABLE IF EXISTS requests");
         jdbcTemplate.execute("CREATE TABLE requests(" +
-                "id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, ip inet NOT NULL, query text, result text)");
+                "id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, " +
+                "ip inet NOT NULL, " +
+                "time timestamp DEFAULT NOW(), " +
+                "query text, " +
+                "result text)");
     }
 }
