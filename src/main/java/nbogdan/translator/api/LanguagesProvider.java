@@ -10,15 +10,15 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 @Slf4j
-public class LanguagesComponent {
+public class LanguagesProvider {
     public static final String API_PATH = "/languages";
     private final RestTemplate restTemplate;
     private final String apiUrl;
     private final ConfigurableApplicationContext ctx;
 
-    public LanguagesComponent(final RestTemplate restTemplate,
-                              @Value("${TRANSLATOR_API_URL}") final String apiUrl,
-                              final ConfigurableApplicationContext ctx) {
+    public LanguagesProvider(final RestTemplate restTemplate,
+                             @Value("${TRANSLATOR_API_URL}") final String apiUrl,
+                             final ConfigurableApplicationContext ctx) {
         this.restTemplate = restTemplate;
         this.apiUrl = apiUrl;
         this.ctx = ctx;
