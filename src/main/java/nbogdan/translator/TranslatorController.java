@@ -1,6 +1,8 @@
 package nbogdan.translator;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,7 +26,8 @@ public class TranslatorController {
     @GetMapping("/")
     public String index(final Model model,
                         @ModelAttribute final Translation translation,
-                        final HttpServletRequest request) {
+                        final HttpServletRequest request,
+                        final HttpServletResponse response) {
         model.addAttribute("translation", translation);
         model.addAttribute("languages", languages);
         final String query = translation.getQuery();
@@ -35,6 +38,8 @@ public class TranslatorController {
                 jdbcTemplate.update("INSERT INTO requests(ip, query, result) VALUES (?::inet, ?, ?)",
                         request.getRemoteAddr(), query, translated);
             } catch (final TranslateException e) {
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                model.addAttribute("error", e.getMessage());
             }
         }
         return "index";
