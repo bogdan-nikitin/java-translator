@@ -1,6 +1,6 @@
 package nbogdan.translator;
 
-public class TranslateException extends Exception {
+public class TranslateException extends RuntimeException {
     public TranslateException(final String message, final Throwable cause) {
         super(message, cause);
     }

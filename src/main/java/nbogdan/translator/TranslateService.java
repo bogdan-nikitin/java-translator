@@ -4,11 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.*;
 import java.util.stream.Stream;
 
@@ -28,32 +27,10 @@ public class TranslateService {
     }
 
     public String translateWord(final String source, final String target, final String word) throws TranslateException {
-        try {
-            try {
-                final TranslatedText response = restTemplate.postForObject(
-                        apiUrl + API_PATH, new TranslateQuery(source, target, word), TranslatedText.class);
+        final TranslatedText response = restTemplate.postForObject(
+                apiUrl + API_PATH, new TranslateQuery(source, target, word), TranslatedText.class);
 
-                if (response == null) {
-                    log.warn("API returned empty response");
-                    throw new TranslateException("Server error");
-                }
-                return response.getTranslatedText();
-            } catch (final HttpStatusCodeException e) {
-                final TranslateApiError error = e.getResponseBodyAs(TranslateApiError.class);
-                if (error == null || error.getError() == null) {
-                    log.error("API returned invalid response while retrieving languages. Message: {}. Status code {}",
-                            e.getMessage(), e.getStatusCode());
-                    throw new TranslateException("Server error", e);
-                } else {
-                    log.error("API returned error while retrieving languages: {}. Status code {}",
-                            error.getError(), e.getStatusCode());
-                    throw new TranslateException("External service returned error", e);
-                }
-            }
-        } catch (final RestClientException e) {
-            log.error("Unknown error during API call: {}", e.getMessage());
-            throw new TranslateException("Server error", e);
-        }
+        return Objects.requireNonNull(response).getTranslatedText();
     }
 
     public String translate(final String source, final String target, final String query) throws TranslateException {
@@ -67,14 +44,14 @@ public class TranslateService {
                 result.append(future.get());
             }
         } catch (final InterruptedException e) {
-            log.error("Translation thread interrupted");
+            log.warn("Translation thread interrupted");
             throw new TranslateException("Server error", e);
         } catch (final ExecutionException e) {
             if (e.getCause() instanceof TranslateException translateException) {
                 throw translateException;
             }
             log.warn("Unknown exception during processing API call: {}", e.getMessage());
-            throw new TranslateException("Server error", e.getCause());
+            throw new TranslateException("API error", e.getCause());
         }
         return result.toString();
     }

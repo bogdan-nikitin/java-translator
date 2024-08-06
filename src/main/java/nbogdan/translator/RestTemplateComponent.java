@@ -11,6 +11,7 @@ public class RestTemplateComponent {
 
     public RestTemplateComponent(final RestTemplateBuilder builder) {
         this.restTemplate = builder.build();
+        this.restTemplate.setErrorHandler(new ApiErrorHandler(this.restTemplate.getMessageConverters()));
     }
 
     @Bean

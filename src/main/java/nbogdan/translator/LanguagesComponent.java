@@ -5,8 +5,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 @Component
@@ -28,22 +26,11 @@ public class LanguagesComponent {
     @Bean
     public Language[] languages() {
         try {
-            try {
-                return restTemplate.getForObject(apiUrl + API_PATH, Language[].class);
-            } catch (final HttpStatusCodeException e) {
-                final TranslateApiError error = e.getResponseBodyAs(TranslateApiError.class);
-                if (error == null || error.getError() == null) {
-                    log.error("API returned invalid response while retrieving languages. Message: {}. Status code {}",
-                            e.getMessage(), e.getStatusCode());
-                } else {
-                    log.error("API returned error while retrieving languages: {}. Status code {}",
-                            error.getError(), e.getStatusCode());
-                }
-            }
-        } catch (final RestClientException e) {
-            log.error("Unknown error during API call: {}", e.getMessage());
+            return restTemplate.getForObject(apiUrl + API_PATH, Language[].class);
+        } catch (final TranslateException e) {
+            log.error("Error during retrieving languages: {}. Shutting down...", e.getMessage());
+            ctx.close();
+            return null;
         }
-        ctx.close();
-        return null;
     }
 }
