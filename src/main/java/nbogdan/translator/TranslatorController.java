@@ -34,17 +34,29 @@ public class TranslatorController {
         model.addAttribute("translation", translation);
         model.addAttribute("languages", languages);
         final String query = translation.getQuery();
-        if (query != null && translation.getSource() != null && translation.getTarget() != null) {
+        final String source = translation.getSource();
+        final String target = translation.getTarget();
+        if (query != null && source != null && target != null) {
+            String result;
+            boolean successful;
             try {
-                final String translated = service.translate(translation.getSource(), translation.getTarget(), translation.getQuery());
-                model.addAttribute("translated", translated);
-                jdbcTemplate.update("INSERT INTO requests(ip, query, result) VALUES (?::inet, ?, ?)",
-                        request.getRemoteAddr(), query, translated);
+                result = service.translate(source, target, query);
+                model.addAttribute("translated", result);
+                successful = true;
             } catch (final TranslateException e) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 model.addAttribute("error", e.getMessage());
+                result = e.getMessage();
+                successful = false;
             }
+            writeToDatabase(request.getRemoteAddr(), query, result, successful);
         }
         return "index";
+    }
+
+    private void writeToDatabase(
+            final String address, final String query, final String result, final boolean successful) {
+        jdbcTemplate.update("INSERT INTO requests(ip, query, result, successful) VALUES (?::inet, ?, ?, ?)",
+                address, query, result, successful);
     }
 }

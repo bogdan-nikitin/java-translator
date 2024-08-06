@@ -17,12 +17,13 @@ public class CreateTable implements CommandLineRunner {
     @Override
     public void run(final String... args) {
         log.info("Creating tables");
-        jdbcTemplate.execute("DROP TABLE IF EXISTS requests");
-        jdbcTemplate.execute("CREATE TABLE requests(" +
+        jdbcTemplate.execute("DROP TABLE IF EXISTS requests");  // TODO: Remove
+        jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS requests(" +
                 "id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, " +
                 "ip inet NOT NULL, " +
+                "successful boolean NOT NULL, " +
                 "time timestamp DEFAULT NOW(), " +
-                "query text, " +
-                "result text)");
+                "query text NOT NULL, " +
+                "result text NOT NULL)");
     }
 }
