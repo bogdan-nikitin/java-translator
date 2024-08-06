@@ -2,6 +2,8 @@
 
 Веб-приложения переводчика
 
+Взаимодействие происходит через веб-интерфейс
+
 В качестве стороннего сервиса перевода был использован 
 [LibreTranslate](https://github.com/LibreTranslate/LibreTranslate/tree/main)
 
@@ -13,6 +15,7 @@
 
 * Java 22 или новее
 * PostgreSQL 16 или новее
+* Maven 3.5 или новее
 
 ### Настройка PostgreSQL
 
@@ -47,7 +50,8 @@ export TRANSLATOR_API_URL=https://translate.terraprint.co/
 
 Вы можете [запустить сервис локально](https://github.com/LibreTranslate/LibreTranslate/tree/main?tab=readme-ov-file#run-with-docker)
 или воспользоваться [зеркалом](https://github.com/LibreTranslate/LibreTranslate/tree/main?tab=readme-ov-file#mirrors).
-**Используемый сервис не должен использовать API-ключи** ([libretranslate.com](https://libretranslate.com/) **не** подойдёт)
+Для работы перевода 
+**используемый сервис не должен использовать API-ключи** ([libretranslate.com](https://libretranslate.com/) **не** подойдёт)
 
 При разработке использовался локально запущенный образ
 
@@ -57,12 +61,20 @@ export TRANSLATOR_API_URL=https://translate.terraprint.co/
 
 ```bash
 git clone https://github.com/bogdan-nikitin/java-translator.git
-cd translator
+cd java-translator
 ```
 
-Запустите через `mvnw` (bash, UNIX), или `mvnw.cmd` (CMD, Windows)
+Запустите через `mvnw` (bash, UNIX) или `mvnw.cmd` (CMD, Windows)
 ```bash
 ./mvnw spring-boot:run
+```
+
+### Запуск тестов
+
+Аналогично предыдущему
+
+```bash
+./mvnw test
 ```
 
 ## Использование

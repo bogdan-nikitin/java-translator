@@ -17,7 +17,6 @@ public class CreateTable implements CommandLineRunner {
     @Override
     public void run(final String... args) {
         log.info("Creating tables");
-        jdbcTemplate.execute("DROP TABLE IF EXISTS requests");  // TODO: Remove
         jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS requests(" +
                 "id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, " +
                 "ip inet NOT NULL, " +
