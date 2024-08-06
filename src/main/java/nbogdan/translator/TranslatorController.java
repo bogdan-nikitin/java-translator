@@ -29,10 +29,13 @@ public class TranslatorController {
         model.addAttribute("languages", languages);
         final String query = translation.getQuery();
         if (query != null && translation.getSource() != null && translation.getTarget() != null) {
-            final String translated = service.translate(translation.getSource(), translation.getTarget(), translation.getQuery());
-            model.addAttribute("translated", translated);
-            jdbcTemplate.update("INSERT INTO requests(ip, query, result) VALUES (?::inet, ?, ?)",
-                    request.getRemoteAddr(), query, translated);
+            try {
+                final String translated = service.translate(translation.getSource(), translation.getTarget(), translation.getQuery());
+                model.addAttribute("translated", translated);
+                jdbcTemplate.update("INSERT INTO requests(ip, query, result) VALUES (?::inet, ?, ?)",
+                        request.getRemoteAddr(), query, translated);
+            } catch (final TranslateException e) {
+            }
         }
         return "index";
     }

@@ -8,7 +8,6 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -25,27 +24,31 @@ public class TranslateService {
         this.executorService = Executors.newFixedThreadPool(THREADS_COUNT);
     }
 
-    public String translateWord(final String source, final String target, final String word) {
-        final ResponseEntity<TranslatedText> response = restTemplate.postForEntity(apiUrl + API_PATH, new TranslateQuery(source, target, word), TranslatedText.class);
-        return Objects.requireNonNull(response.getBody()).getTranslatedText();
+    public String translateWord(final String source, final String target, final String word) throws TranslateException {
+        final TranslatedText response = restTemplate.postForObject(
+                apiUrl + API_PATH, new TranslateQuery(source, target, word), TranslatedText.class);
+
+        if (response == null) {
+            throw new TranslateException("Empty response");
+        }
+        return response.getTranslatedText();
     }
 
-    public String translate(final String source, final String target, final String query) {
+    public String translate(final String source, final String target, final String query) throws TranslateException {
         final Stream<String> words = BreakWords.breakWords(query, Locale.of(source));
+        final StringBuilder result = new StringBuilder();
         try {
-            return executorService.invokeAll(words
-                            .map(word -> (Callable<String>)
-                                    () -> BreakWords.isWord(word) ? translateWord(source, target, word) : word)
-                            .toList()).stream()
-                    .map(future -> {
-                        try {
-                            return future.get();
-                        } catch (final ExecutionException | InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }).collect(Collectors.joining());
+            for (final Future<String> future : executorService.invokeAll(words
+                    .map(word -> (Callable<String>)
+                            () -> BreakWords.isWord(word) ? translateWord(source, target, word) : word)
+                    .toList())) {
+                result.append(future.get());
+            }
         } catch (final InterruptedException e) {
-            throw new RuntimeException(e);
+            throw new TranslateException(e);
+        } catch (final ExecutionException e) {
+            throw new TranslateException(e);
         }
+        return result.toString();
     }
 }
