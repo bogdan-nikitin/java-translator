@@ -1,6 +1,7 @@
-package nbogdan.translator;
+package nbogdan.translator.api;
 
 import lombok.extern.slf4j.Slf4j;
+import nbogdan.translator.api.dto.ApiError;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.lang.NonNull;
@@ -23,11 +24,11 @@ public class ApiErrorHandler extends DefaultResponseErrorHandler {
     @Override
     public void handleError(@NonNull final ClientHttpResponse response) throws IOException {
 
-        final HttpMessageConverterExtractor<TranslateApiError> errorMessageExtractor =
-                new HttpMessageConverterExtractor<>(TranslateApiError.class, messageConverters);
+        final HttpMessageConverterExtractor<ApiError> errorMessageExtractor =
+                new HttpMessageConverterExtractor<>(ApiError.class, messageConverters);
 
         try {
-            final TranslateApiError error = errorMessageExtractor.extractData(response);
+            final ApiError error = errorMessageExtractor.extractData(response);
             if (error == null || error.getError() == null) {
                 log.warn("API returned invalid or null response. Status code {}", response.getStatusCode());
                 throw new TranslateException("API error");

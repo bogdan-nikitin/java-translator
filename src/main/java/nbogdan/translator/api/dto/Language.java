@@ -1,4 +1,4 @@
-package nbogdan.translator;
+package nbogdan.translator.api.dto;
 
 import lombok.Data;
 

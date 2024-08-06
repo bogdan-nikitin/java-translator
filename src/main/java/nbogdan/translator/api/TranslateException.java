@@ -1,4 +1,4 @@
-package nbogdan.translator;
+package nbogdan.translator.api;
 
 public class TranslateException extends RuntimeException {
     public TranslateException(final String message, final Throwable cause) {

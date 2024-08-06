@@ -2,6 +2,9 @@ package nbogdan.translator;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import nbogdan.translator.api.TranslateException;
+import nbogdan.translator.api.dto.Language;
+import nbogdan.translator.api.dto.Translation;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;

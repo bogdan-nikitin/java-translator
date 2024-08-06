@@ -1,4 +1,4 @@
-package nbogdan.translator;
+package nbogdan.translator.util;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

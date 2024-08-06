@@ -1,6 +1,7 @@
-package nbogdan.translator;
+package nbogdan.translator.api;
 
 import lombok.extern.slf4j.Slf4j;
+import nbogdan.translator.api.dto.Language;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;

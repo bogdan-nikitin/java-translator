@@ -1,5 +1,9 @@
 package nbogdan.translator;
 
+import nbogdan.translator.api.TranslateException;
+import nbogdan.translator.api.dto.TranslateQuery;
+import nbogdan.translator.api.dto.TranslatedText;
+import nbogdan.translator.util.BreakWords;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,9 +19,9 @@ import java.util.stream.Stream;
 public class TranslateService {
     private static final int THREADS_COUNT = 10;
     private static final Logger log = LoggerFactory.getLogger(TranslateService.class);
+    private final static String API_PATH = "/translate";
     private final RestTemplate restTemplate;
     private final String apiUrl;
-    private final static String API_PATH = "/translate";
     private final ExecutorService executorService;
 
     public TranslateService(final RestTemplate restTemplate, @Value("${TRANSLATOR_API_URL}") final String apiUrl) {
