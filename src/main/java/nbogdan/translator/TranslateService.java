@@ -5,7 +5,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.*;
@@ -35,16 +34,16 @@ public class TranslateService {
         final Stream<String> words = BreakWords.breakWords(query, Locale.of(source));
         try {
             return executorService.invokeAll(words
-                    .map(word -> (Callable<String>)
-                            () -> BreakWords.isWord(word) ? translateWord(source, target, word) : word)
+                            .map(word -> (Callable<String>)
+                                    () -> BreakWords.isWord(word) ? translateWord(source, target, word) : word)
                             .toList()).stream()
                     .map(future -> {
-                try {
-                    return future.get();
-                } catch (final ExecutionException | InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }).collect(Collectors.joining());
+                        try {
+                            return future.get();
+                        } catch (final ExecutionException | InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }).collect(Collectors.joining());
         } catch (final InterruptedException e) {
             throw new RuntimeException(e);
         }

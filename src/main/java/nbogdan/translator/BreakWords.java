@@ -19,11 +19,14 @@ public class BreakWords {
         final BreakIterator boundary = BreakIterator.getWordInstance(locale);
         boundary.setText(text);
 
-        return Stream.iterate(new Slice(boundary.first(), boundary.next()), slice -> slice.getEnd() != BreakIterator.DONE, slice -> {
-            slice.setStart(slice.getEnd());
-            slice.setEnd(boundary.next());
-            return slice;
-        }).map(slice -> text.substring(slice.getStart(), slice.getEnd()));
+        return Stream.iterate(
+                new Slice(boundary.first(), boundary.next()),
+                slice -> slice.getEnd() != BreakIterator.DONE,
+                slice -> {
+                    slice.setStart(slice.getEnd());
+                    slice.setEnd(boundary.next());
+                    return slice;
+                }).map(slice -> text.substring(slice.getStart(), slice.getEnd()));
     }
 
     public static boolean isWord(final String string) {
